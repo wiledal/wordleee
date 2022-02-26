@@ -1,6 +1,11 @@
 import React, { FC, useState } from "react";
-import { Box, BoxProps, Text, useInput } from "ink";
+import { Box, BoxProps, Newline, Spacer, Text, useApp, useInput } from "ink";
 import BigText from "ink-big-text";
+import {
+	getWordFromDate,
+	getWordNumberFromDate,
+	validateWord,
+} from "./helpers";
 
 const letterBoxSettings: BoxProps = {
 	width: 16,
@@ -10,10 +15,6 @@ const letterBoxSettings: BoxProps = {
 };
 
 const font = "block";
-
-interface InputRowProps {
-	word: string;
-}
 
 const EmptyRow = () => (
 	<>
@@ -53,7 +54,11 @@ const CompletedRow: FC<CompletedRowProps> = ({ word, correctWord }) => {
 	);
 };
 
-const InputRow: FC<InputRowProps> = ({ word }) => {
+interface InputRowProps {
+	word: string;
+	invalid: boolean;
+}
+const InputRow: FC<InputRowProps> = ({ word, invalid }) => {
 	return (
 		<>
 			<Box>
@@ -61,7 +66,12 @@ const InputRow: FC<InputRowProps> = ({ word }) => {
 					const letter = word[i] || " ";
 
 					return (
-						<Box key={i} {...letterBoxSettings} borderStyle="bold">
+						<Box
+							key={i}
+							{...letterBoxSettings}
+							borderStyle="bold"
+							borderColor={invalid ? "red" : "system"}
+						>
 							{letter && <BigText font={font} text={letter} />}
 						</Box>
 					);
@@ -77,6 +87,7 @@ interface RowProps {
 	inputWord: string;
 	finalWord: string;
 	correctWord: string;
+	notInWordList: boolean;
 }
 const Row: FC<RowProps> = ({
 	active,
@@ -84,8 +95,9 @@ const Row: FC<RowProps> = ({
 	inputWord,
 	finalWord,
 	correctWord,
+	notInWordList,
 }) => {
-	if (active) return <InputRow word={inputWord} />;
+	if (active) return <InputRow word={inputWord} invalid={notInWordList} />;
 	if (done) return <CompletedRow word={finalWord} correctWord={correctWord} />;
 	return <EmptyRow />;
 };
@@ -130,14 +142,64 @@ const Alphabet: FC<AlphabetProps> = ({ guessedWords, correctWord }) => {
 	);
 };
 
+const renderEmojiGuessRow = (guess: string, correctWord: string) => {
+	return correctWord
+		.split("")
+		.map((_n, i) => {
+			if (guess[i] == correctWord[i]) return "🟩";
+			if (correctWord.includes(guess[i] || "_")) return "🟨";
+			return "⬛";
+		})
+		.join("");
+};
+
+interface EndScreenProps {
+	correctWord: string;
+	guessedWords: string[];
+}
+const EndScreen: FC<EndScreenProps> = ({ correctWord, guessedWords }) => {
+	const isWinner = guessedWords.includes(correctWord);
+	const wordNumber = getWordNumberFromDate(new Date());
+
+	return (
+		<Box>
+			{isWinner && (
+				<Box flexDirection="column">
+					<BigText text="You did it!" />
+					<Text>
+						Wordleee #{wordNumber} {guessedWords.length} / 6
+					</Text>
+					<Newline />
+					{guessedWords.map((guess, i) => (
+						<Text key={i}>{renderEmojiGuessRow(guess, correctWord)}</Text>
+					))}
+					<Newline />
+				</Box>
+			)}
+			{!isWinner && (
+				<Box>
+					<Text>Too bad...</Text>
+				</Box>
+			)}
+		</Box>
+	);
+};
+
 const App: FC = () => {
-	const correctWord = "potat";
+	const correctWord = getWordFromDate(new Date()) || "";
+	const wordNumber = getWordNumberFromDate(new Date());
 	const [activeWord, setActiveWord] = useState(0);
 	const [guessedWords, setGuessedWords] = useState<string[]>([]);
 	const [inputWord, setInputWord] = useState("");
+	const [notInWordList, setNotInWordList] = useState("");
+
+	const [playing, setPlaying] = useState(true);
+
+	const { exit } = useApp();
 
 	useInput((input, key) => {
 		if (key.backspace || key.delete) {
+			setNotInWordList("");
 			setInputWord((curr) => {
 				const a = curr.split("");
 				a.pop();
@@ -147,41 +209,99 @@ const App: FC = () => {
 			return;
 		}
 
-		if (key.return) {
+		if (key.return && inputWord.length === 5) {
+			if (!validateWord(inputWord)) {
+				setNotInWordList(inputWord);
+				return;
+			}
+
 			setInputWord("");
 			setGuessedWords((curr) => [...curr, inputWord]);
 			setActiveWord((curr) => curr + 1);
+
+			if (inputWord === correctWord) {
+				setTimeout(() => {
+					setPlaying(false);
+					exit();
+				}, 1000);
+
+				return;
+			}
+
+			if (guessedWords.length >= 6) {
+				setPlaying(false);
+				exit();
+
+				setTimeout(() => {
+					setPlaying(false);
+					exit();
+				}, 1000);
+			}
 		}
 
-		if (!input.trim()) return;
+		const trimmed = input.toLowerCase().replace(/[^A-Za-z]/gi, "");
 
-		setInputWord((curr) => curr + input.trim().toLowerCase());
+		if (!trimmed) return;
+
+		setInputWord((curr) => (curr + trimmed).slice(0, 5));
 	});
 
 	return (
-		<Box flexDirection="column" alignItems="center">
-			<Box flexDirection="column" alignItems="center" marginBottom={2}>
-				<BigText text="WORLDEEE" font="simple3d" />
-				<Text>a humble wordle clone, in the terminal</Text>
-			</Box>
+		<>
+			{playing && (
+				<Box flexDirection="column" alignItems="center">
+					<Box flexDirection="column">
+						<Box flexDirection="column" alignItems="center" marginBottom={4}>
+							<BigText text="WORLDEEE" font="simple3d" />
+							<Text>a humble wordle clone, in the terminal</Text>
+						</Box>
 
-			<Box>
-				<Box flexDirection="column" marginRight={4}>
-					{Array.from({ length: 5 }).map((_n, i) => (
-						<Row
-							key={i}
-							active={activeWord === i}
-							finalWord={guessedWords[i] || ""}
-							inputWord={inputWord}
-							correctWord={correctWord}
-							done={activeWord > i}
-						/>
-					))}
+						<Box>
+							<Box flexDirection="column" marginRight={4}>
+								{Array.from({ length: 6 }).map((_n, i) => (
+									<Row
+										key={i}
+										active={activeWord === i}
+										notInWordList={!!notInWordList}
+										finalWord={guessedWords[i] || ""}
+										inputWord={inputWord}
+										correctWord={correctWord}
+										done={activeWord > i}
+									/>
+								))}
+
+								<Box>
+									<Text>Wordleee #{wordNumber}</Text>
+									<Spacer />
+									<Text>by @etthugo</Text>
+								</Box>
+							</Box>
+
+							<Box flexDirection="column">
+								<Alphabet
+									correctWord={correctWord}
+									guessedWords={guessedWords}
+								/>
+								{!!notInWordList && (
+									<Box
+										marginTop={3}
+										borderColor="redBright"
+										borderStyle="double"
+									>
+										<Text color="redBright">
+											"{inputWord}" is not in word list
+										</Text>
+									</Box>
+								)}
+							</Box>
+						</Box>
+					</Box>
 				</Box>
-
-				<Alphabet correctWord={correctWord} guessedWords={guessedWords} />
-			</Box>
-		</Box>
+			)}
+			{!playing && (
+				<EndScreen correctWord={correctWord} guessedWords={guessedWords} />
+			)}
+		</>
 	);
 };
 
