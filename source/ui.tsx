@@ -1,189 +1,14 @@
 import React, { FC, useState } from "react";
-import { Box, BoxProps, Newline, Spacer, Text, useApp, useInput } from "ink";
+import { Box, Newline, Spacer, Text, useApp, useInput } from "ink";
 import BigText from "ink-big-text";
 import {
 	getWordFromDate,
 	getWordNumberFromDate,
 	validateWord,
 } from "./helpers";
-
-const letterBoxSettings: BoxProps = {
-	width: 16,
-	height: 10,
-	justifyContent: "center",
-	borderStyle: "round",
-};
-
-const font = "block";
-
-const EmptyRow = () => (
-	<>
-		<Box>
-			{Array.from({ length: 5 }).map((_n, i) => (
-				<Box key={i} {...letterBoxSettings} />
-			))}
-		</Box>
-	</>
-);
-
-interface CompletedRowProps {
-	word: string;
-	correctWord: string;
-}
-const CompletedRow: FC<CompletedRowProps> = ({ word, correctWord }) => {
-	return (
-		<Box>
-			{Array.from({ length: 5 }).map((_n, i) => {
-				const letter = word[i];
-				const isCorrect = word[i] == correctWord[i];
-				const isInWord = correctWord.includes(letter || "_");
-
-				let borderColor = "system";
-				if (isInWord) borderColor = "yellow";
-				if (isCorrect) borderColor = "green";
-
-				return (
-					<Box key={i} {...letterBoxSettings} borderColor={borderColor}>
-						{letter && (
-							<BigText font={font} colors={[borderColor]} text={letter} />
-						)}
-					</Box>
-				);
-			})}
-		</Box>
-	);
-};
-
-interface InputRowProps {
-	word: string;
-	invalid: boolean;
-}
-const InputRow: FC<InputRowProps> = ({ word, invalid }) => {
-	return (
-		<>
-			<Box>
-				{Array.from({ length: 5 }).map((_n, i) => {
-					const letter = word[i] || " ";
-
-					return (
-						<Box
-							key={i}
-							{...letterBoxSettings}
-							borderStyle="bold"
-							borderColor={invalid ? "red" : "system"}
-						>
-							{letter && <BigText font={font} text={letter} />}
-						</Box>
-					);
-				})}
-			</Box>
-		</>
-	);
-};
-
-interface RowProps {
-	active: boolean;
-	done: boolean;
-	inputWord: string;
-	finalWord: string;
-	correctWord: string;
-	notInWordList: boolean;
-}
-const Row: FC<RowProps> = ({
-	active,
-	done,
-	inputWord,
-	finalWord,
-	correctWord,
-	notInWordList,
-}) => {
-	if (active) return <InputRow word={inputWord} invalid={notInWordList} />;
-	if (done) return <CompletedRow word={finalWord} correctWord={correctWord} />;
-	return <EmptyRow />;
-};
-
-interface AlphabetProps {
-	guessedWords: string[];
-	correctWord: string;
-}
-
-const letterGroups = "abcdefg hijklmn opqrstu vwxyz".split(" ");
-
-const Alphabet: FC<AlphabetProps> = ({ guessedWords, correctWord }) => {
-	const guessedLetters = guessedWords.join("");
-
-	return (
-		<Box flexDirection="column">
-			{letterGroups.map((group, i) => {
-				const groupLetters = group.split("");
-
-				return (
-					<Box key={i}>
-						{groupLetters.map((letter) => {
-							const invalidLetter =
-								guessedLetters.includes(letter) &&
-								!correctWord.includes(letter);
-
-							return (
-								<Box
-									key={letter}
-									borderColor={invalidLetter ? "red" : "system"}
-									borderStyle="single"
-									padding={1}
-								>
-									<Text dimColor={invalidLetter}>{letter.toUpperCase()}</Text>
-								</Box>
-							);
-						})}
-					</Box>
-				);
-			})}
-		</Box>
-	);
-};
-
-const renderEmojiGuessRow = (guess: string, correctWord: string) => {
-	return correctWord
-		.split("")
-		.map((_n, i) => {
-			if (guess[i] == correctWord[i]) return "🟩";
-			if (correctWord.includes(guess[i] || "_")) return "🟨";
-			return "⬛";
-		})
-		.join("");
-};
-
-interface EndScreenProps {
-	correctWord: string;
-	guessedWords: string[];
-}
-const EndScreen: FC<EndScreenProps> = ({ correctWord, guessedWords }) => {
-	const isWinner = guessedWords.includes(correctWord);
-	const wordNumber = getWordNumberFromDate(new Date());
-
-	return (
-		<Box>
-			{isWinner && (
-				<Box flexDirection="column">
-					<BigText text="You did it!" />
-					<Text>
-						Wordleee #{wordNumber} {guessedWords.length} / 6
-					</Text>
-					<Newline />
-					{guessedWords.map((guess, i) => (
-						<Text key={i}>{renderEmojiGuessRow(guess, correctWord)}</Text>
-					))}
-					<Newline />
-				</Box>
-			)}
-			{!isWinner && (
-				<Box>
-					<Text>Too bad...</Text>
-				</Box>
-			)}
-		</Box>
-	);
-};
+import { Row } from "./Row";
+import { Alphabet } from "./Alphabet";
+import { EndScreen } from "./EndScreen";
 
 const App: FC = () => {
 	const correctWord = getWordFromDate(new Date()) || "";
@@ -198,6 +23,10 @@ const App: FC = () => {
 	const { exit } = useApp();
 
 	useInput((input, key) => {
+		if (key.escape) {
+			exit();
+		}
+
 		if (key.backspace || key.delete) {
 			setNotInWordList("");
 			setInputWord((curr) => {
@@ -228,10 +57,7 @@ const App: FC = () => {
 				return;
 			}
 
-			if (guessedWords.length >= 6) {
-				setPlaying(false);
-				exit();
-
+			if (guessedWords.length >= 5) {
 				setTimeout(() => {
 					setPlaying(false);
 					exit();
@@ -253,7 +79,7 @@ const App: FC = () => {
 					<Box flexDirection="column">
 						<Box flexDirection="column" alignItems="center" marginBottom={4}>
 							<BigText text="WORLDEEE" font="simple3d" />
-							<Text>a humble wordle clone, in the terminal</Text>
+							<Text>A humble Wordle clone in the terminal</Text>
 						</Box>
 
 						<Box>
@@ -278,21 +104,34 @@ const App: FC = () => {
 							</Box>
 
 							<Box flexDirection="column">
-								<Alphabet
-									correctWord={correctWord}
-									guessedWords={guessedWords}
-								/>
-								{!!notInWordList && (
-									<Box
-										marginTop={3}
-										borderColor="redBright"
-										borderStyle="double"
-									>
-										<Text color="redBright">
-											"{inputWord}" is not in word list
-										</Text>
-									</Box>
-								)}
+								<Box flexDirection="column" justifyContent="space-between">
+									<Alphabet
+										correctWord={correctWord}
+										guessedWords={guessedWords}
+									/>
+									{!!notInWordList && (
+										<Box
+											marginTop={3}
+											borderColor="redBright"
+											borderStyle="double"
+										>
+											<Text color="redBright">
+												"{inputWord}" is not in word list
+											</Text>
+										</Box>
+									)}
+								</Box>
+								<Spacer />
+								<Box width={32} paddingBottom={2}>
+									<Text>
+										Guess the 5-letter word in six tries.
+										<Newline />
+										Input a word and press ENTER to progress.
+										<Newline />
+										<Newline />
+										Exit with ESCAPE.
+									</Text>
+								</Box>
 							</Box>
 						</Box>
 					</Box>

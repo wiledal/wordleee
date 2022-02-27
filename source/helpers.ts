@@ -21,3 +21,14 @@ export const getWordFromDate = (date: string | Date) => {
 export const validateWord = (word: string) => {
 	return data.words.includes(word) || data.possible.includes(word);
 };
+
+export const renderEmojiGuessRow = (guess: string, correctWord: string) => {
+	return correctWord
+		.split("")
+		.map((_n, i) => {
+			if (guess[i] == correctWord[i]) return "🟩";
+			if (correctWord.includes(guess[i] || "_")) return "🟨";
+			return "⬛";
+		})
+		.join("");
+};
