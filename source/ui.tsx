@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import { Box, Newline, Spacer, Text, useApp, useInput } from "ink";
 import BigText from "ink-big-text";
 import {
-	getWordFromDate,
+	getWordFromNumber,
 	getWordNumberFromDate,
 	validateWord,
 } from "./helpers";
@@ -10,9 +10,13 @@ import { Row } from "./Row";
 import { Alphabet } from "./Alphabet";
 import { EndScreen } from "./EndScreen";
 
-const App: FC = () => {
-	const correctWord = getWordFromDate(new Date()) || "";
-	const wordNumber = getWordNumberFromDate(new Date());
+interface AppProps {
+	number?: number;
+}
+
+const App: FC<AppProps> = ({ number }) => {
+	const wordNumber = number || getWordNumberFromDate(new Date());
+	const correctWord = getWordFromNumber(wordNumber);
 	const [activeWord, setActiveWord] = useState(0);
 	const [guessedWords, setGuessedWords] = useState<string[]>([]);
 	const [inputWord, setInputWord] = useState("");
@@ -51,7 +55,10 @@ const App: FC = () => {
 			if (inputWord === correctWord) {
 				setTimeout(() => {
 					setPlaying(false);
-					exit();
+
+					setTimeout(() => {
+						exit();
+					}, 100);
 				}, 1000);
 
 				return;
@@ -60,7 +67,10 @@ const App: FC = () => {
 			if (guessedWords.length >= 5) {
 				setTimeout(() => {
 					setPlaying(false);
-					exit();
+
+					setTimeout(() => {
+						exit();
+					}, 100);
 				}, 1000);
 			}
 		}
@@ -138,7 +148,11 @@ const App: FC = () => {
 				</Box>
 			)}
 			{!playing && (
-				<EndScreen correctWord={correctWord} guessedWords={guessedWords} />
+				<EndScreen
+					correctWord={correctWord}
+					guessedWords={guessedWords}
+					wordNumber={wordNumber}
+				/>
 			)}
 		</>
 	);

@@ -1,18 +1,19 @@
 import React, { FC } from "react";
 import { Box, Newline, Text } from "ink";
 import BigText from "ink-big-text";
-import { getWordNumberFromDate, renderEmojiGuessRow } from "./helpers";
+import { renderEmojiGuessRow } from "./helpers";
 
 interface EndScreenProps {
 	correctWord: string;
 	guessedWords: string[];
+	wordNumber: number;
 }
 export const EndScreen: FC<EndScreenProps> = ({
 	correctWord,
 	guessedWords,
+	wordNumber,
 }) => {
 	const isWinner = guessedWords.includes(correctWord);
-	const wordNumber = getWordNumberFromDate(new Date());
 
 	return (
 		<Box>

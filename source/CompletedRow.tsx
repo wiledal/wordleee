@@ -22,7 +22,12 @@ export const CompletedRow: FC<CompletedRowProps> = ({ word, correctWord }) => {
 				return (
 					<Box key={i} {...LETTER_BOX_SETTINGS} borderColor={borderColor}>
 						{letter && (
-							<BigText font={FONT} colors={[borderColor]} text={letter} />
+							<BigText
+								space={false}
+								font={FONT}
+								colors={[borderColor]}
+								text={letter}
+							/>
 						)}
 					</Box>
 				);

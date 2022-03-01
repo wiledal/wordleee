@@ -21,7 +21,7 @@ export const InputRow: FC<InputRowProps> = ({ word, invalid }) => {
 							borderStyle="bold"
 							borderColor={invalid ? "red" : "system"}
 						>
-							{letter && <BigText font={FONT} text={letter} />}
+							{letter && <BigText space={false} font={FONT} text={letter} />}
 						</Box>
 					);
 				})}
