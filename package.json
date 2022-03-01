@@ -8,48 +8,28 @@
 	},
 	"scripts": {
 		"build": "tsc && chmod +x dist/cli.js",
-		"start": "npm run build && dist/cli.js",
-		"pretest": "npm run build",
-		"test": "xo && ava",
 		"watch": "tsc --watch"
 	},
 	"files": [
 		"dist/cli.js"
 	],
+	"np": {
+		"contents": "dist"
+	},
 	"dependencies": {
-		"@types/ink-big-text": "^1.2.1",
 		"ink": "^3.2.0",
 		"ink-big-text": "^1.2.0",
-		"meow": "^9.0.0",
 		"react": "^17.0.2"
 	},
-	"ava": {
-		"typescript": {
-			"extensions": [
-				"tsx"
-			],
-			"rewritePaths": {
-				"source/": "dist/"
-			}
-		}
-	},
-	"xo": {
-		"extends": "xo-react",
-		"rules": {
-			"react/prop-types": "off"
-		}
-	},
 	"devDependencies": {
+		"@types/ink-big-text": "^1.2.1",
 		"@ava/typescript": "^3.0.1",
 		"@sindresorhus/tsconfig": "^2.0.0",
 		"@types/react": "^17.0.39",
-		"ava": "^4.0.1",
 		"chalk": "^4.1.2",
 		"eslint-config-xo-react": "^0.26.0",
 		"eslint-plugin-react": "^7.29.0",
 		"eslint-plugin-react-hooks": "^4.3.0",
-		"ink-testing-library": "^2.1.0",
-		"typescript": "^4.5.5",
-		"xo": "^0.39.1"
+		"typescript": "^4.5.5"
 	}
 }

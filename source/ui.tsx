@@ -144,5 +144,4 @@ const App: FC = () => {
 	);
 };
 
-module.exports = App;
 export default App;
