@@ -27,7 +27,7 @@ npx wordleee <number>
 
 ## Cool screenshot 😎
 
-![screenshot](./misc/readme-assets/wordleee-screenshot.jpg)
+![screenshot](misc/readme-assets/wordleee-screenshot.jpg)
 
 🐦 [@etthugo](https://twitter.com/etthugo)
 

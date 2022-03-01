@@ -11,11 +11,8 @@
 		"watch": "tsc --watch"
 	},
 	"files": [
-		"dist/cli.js"
+		"dist"
 	],
-	"np": {
-		"contents": "dist"
-	},
 	"dependencies": {
 		"ink": "^3.2.0",
 		"ink-big-text": "^1.2.0",
