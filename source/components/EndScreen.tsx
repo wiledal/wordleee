@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Box, Newline, Text } from "ink";
 import BigText from "ink-big-text";
-import { renderEmojiGuessRow } from "./helpers";
+import { renderEmojiGuessRow } from "../helpers";
 
 interface EndScreenProps {
 	correctWord: string;

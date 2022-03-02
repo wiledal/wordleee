@@ -10,10 +10,10 @@ let number;
 if (arg && typeof parseInt(arg) !== "number") {
 	console.log(
 		`
-wordlee
+wordleee
 
 Usage:
-    wordlee             Guess today's word!
+    wordleee            Play today's word!
     wordleee <number>   Play a previous or future word!
 `
 	);

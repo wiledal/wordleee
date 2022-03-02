@@ -6,9 +6,9 @@ import {
 	getWordNumberFromDate,
 	validateWord,
 } from "./helpers";
-import { Row } from "./Row";
-import { Alphabet } from "./Alphabet";
-import { EndScreen } from "./EndScreen";
+import { Row } from "./components/Row";
+import { Alphabet } from "./components/Alphabet";
+import { EndScreen } from "./components/EndScreen";
 
 interface AppProps {
 	number?: number;

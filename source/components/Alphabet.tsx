@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Box, Text } from "ink";
-import { LETTER_GROUPS } from "./constants";
+import { LETTER_GROUPS } from "../constants";
 
 export interface AlphabetProps {
 	guessedWords: string[];

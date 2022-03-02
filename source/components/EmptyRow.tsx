@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "ink";
-import { LETTER_BOX_SETTINGS } from "./constants";
+import { LETTER_BOX_SETTINGS } from "../constants";
 
 export const EmptyRow = () => (
 	<>

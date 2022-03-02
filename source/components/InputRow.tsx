@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Box } from "ink";
 import BigText from "ink-big-text";
-import { LETTER_BOX_SETTINGS, FONT } from "./constants";
+import { LETTER_BOX_SETTINGS, FONT } from "../constants";
 
 interface InputRowProps {
 	word: string;
