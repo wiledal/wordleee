@@ -7,7 +7,9 @@ import { exit } from "process";
 const [, , arg] = process.argv;
 let number;
 
-if (arg && typeof parseInt(arg) !== "number") {
+const parsedNumber = parseInt(arg || "");
+
+if (arg && isNaN(parsedNumber)) {
 	console.log(
 		`
 wordleee

@@ -7,7 +7,7 @@ A clone of the popular word guessing game, that runs in the terminal with a fanc
 🔌 Based on Node.js (with the amazing [Ink package](https://github.com/vadimdemedes/ink))!  
 📅 Follows the same word progression as the original game! (please don't sue me)  
 ✨ Possible to play past (or future) words!  
-😎 Playing games in the terminal is really hip?
+😎 Playing games in the terminal is really cool?
 
 ## How to play
 
