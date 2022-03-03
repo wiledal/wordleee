@@ -3,6 +3,7 @@
 	"version": "1.1.4",
 	"license": "MIT",
 	"bin": "dist/cli.js",
+	"repository": "wiledal/wordleee",
 	"author": {
 		"name": "wiledal",
 		"email": "hugo.wiledal@gmail.com",
