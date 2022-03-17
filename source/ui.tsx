@@ -88,7 +88,7 @@ const App: FC<AppProps> = ({ number }) => {
 				<Box flexDirection="column" alignItems="center">
 					<Box flexDirection="column">
 						<Box flexDirection="column" alignItems="center" marginBottom={4}>
-							<BigText text="WORLDEEE" font="simple3d" />
+							<BigText text="WORDLEEE" font="simple3d" />
 							<Text>A humble Wordle clone in the terminal</Text>
 						</Box>
 
