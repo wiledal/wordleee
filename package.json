@@ -4,6 +4,7 @@
 	"license": "MIT",
 	"bin": "dist/cli.js",
 	"repository": "wiledal/wordleee",
+	"keywords": ["wordle", "ink", "word game"],
 	"author": {
 		"name": "wiledal",
 		"email": "hugo.wiledal@gmail.com",
